@@ -2,6 +2,7 @@ const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define('detalle_pedidos', {
     id_detalle_pedidos: {
+      autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
@@ -27,11 +28,11 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     },
     precio_unitario: {
-      type: DataTypes.DECIMAL(10,0),
+      type: DataTypes.DECIMAL(18,2),
       allowNull: false
     },
     subtotal: {
-      type: DataTypes.DECIMAL(10,0),
+      type: DataTypes.DECIMAL(18,2),
       allowNull: false
     },
     estado: {

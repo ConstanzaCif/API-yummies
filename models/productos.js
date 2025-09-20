@@ -20,11 +20,11 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true
     },
     precio: {
-      type: DataTypes.DECIMAL(10,0),
+      type: DataTypes.DECIMAL(18,2),
       allowNull: false
     },
     gramaje: {
-      type: DataTypes.DECIMAL(10,0),
+      type: DataTypes.DECIMAL(18,2),
       allowNull: false
     },
     id_linea: {

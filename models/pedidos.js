@@ -2,6 +2,7 @@ const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define('pedidos', {
     id_pedido: {
+      autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
@@ -33,6 +34,10 @@ module.exports = function(sequelize, DataTypes) {
     estado: {
       type: DataTypes.TINYINT,
       allowNull: false
+    },
+    total: {
+      type: DataTypes.DECIMAL(18,2),
+      allowNull: true
     }
   }, {
     sequelize,
