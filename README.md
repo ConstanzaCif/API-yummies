@@ -35,6 +35,13 @@ PORT=
 ````
 ---
 
-## Instalación y ejecución
-git clone 
-cd 
+## Instalación
+```
+git clone https://github.com/ConstanzaCif/API-yummies.git
+cd API-yummies
+```
+## Ejecución
+````
+npm install 
+npm run dev
+````
