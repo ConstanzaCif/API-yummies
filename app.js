@@ -1,16 +1,16 @@
 const express = require('express');
 const { sequelize } = require('./db');
+const routes = require('./routes');
+const app = express();
+const path = require('path');
 
 
 require('dotenv').config();
 console.log(process.env.DB_NAME);
 
-const routes = require('./routes'); 
-const app = express();
-
 app.use(express.json());
 app.use('/api', routes);
-
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 sequelize.authenticate()
 .then(() => console.log("Connected to the DB"))
@@ -19,7 +19,6 @@ sequelize.authenticate()
 app.get('/', (req, res) => {
   res.json({ message: 'Server running' });
 });
-
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
