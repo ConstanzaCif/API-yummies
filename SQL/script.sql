@@ -25,12 +25,12 @@ DROP TABLE IF EXISTS `detalle_pedidos`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `detalle_pedidos` (
-  `id_detalle_pedidos` int NOT NULL,
+  `id_detalle_pedidos` int NOT NULL AUTO_INCREMENT,
   `id_producto` int NOT NULL,
   `id_pedido` int NOT NULL,
   `cantidad` int NOT NULL,
-  `precio_unitario` decimal(10,0) NOT NULL,
-  `subtotal` decimal(10,0) NOT NULL,
+  `precio_unitario` decimal(18,2) NOT NULL,
+  `subtotal` decimal(18,2) NOT NULL,
   `createdAt` timestamp NOT NULL,
   `updatedAt` timestamp NOT NULL,
   `estado` tinyint NOT NULL,
@@ -66,7 +66,7 @@ CREATE TABLE `linea_productos` (
   `updatedAt` timestamp NOT NULL,
   `estado` tinyint NOT NULL,
   PRIMARY KEY (`id_linea_productos`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -75,6 +75,7 @@ CREATE TABLE `linea_productos` (
 
 LOCK TABLES `linea_productos` WRITE;
 /*!40000 ALTER TABLE `linea_productos` DISABLE KEYS */;
+INSERT INTO `linea_productos` VALUES (1,'Taqueritos',NULL,'2025-09-19 06:00:00','2025-09-19 06:00:00',1),(2,'Zambos',NULL,'2025-09-19 06:00:00','2025-09-19 06:00:00',1);
 /*!40000 ALTER TABLE `linea_productos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -86,7 +87,7 @@ DROP TABLE IF EXISTS `pedidos`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `pedidos` (
-  `id_pedido` int NOT NULL,
+  `id_pedido` int NOT NULL AUTO_INCREMENT,
   `fecha` date NOT NULL,
   `id_tienda` int NOT NULL,
   `ubicacion` varchar(150) NOT NULL,
@@ -94,6 +95,7 @@ CREATE TABLE `pedidos` (
   `createdAt` timestamp NOT NULL,
   `updatedAt` timestamp NOT NULL,
   `estado` tinyint NOT NULL,
+  `total` decimal(18,2) DEFAULT NULL,
   PRIMARY KEY (`id_pedido`),
   KEY `tienda-pedido_idx` (`id_tienda`),
   KEY `usuario-pedido_idx` (`id_usuario`),
@@ -123,8 +125,8 @@ CREATE TABLE `productos` (
   `nombre_producto` varchar(100) NOT NULL,
   `descripcion` varchar(250) DEFAULT NULL,
   `imagen_url` varchar(100) DEFAULT NULL,
-  `precio` decimal(10,0) NOT NULL,
-  `gramaje` decimal(10,0) NOT NULL,
+  `precio` decimal(18,2) NOT NULL,
+  `gramaje` decimal(18,2) NOT NULL,
   `id_linea` int NOT NULL,
   `createdAt` timestamp NOT NULL,
   `updatedAt` timestamp NOT NULL,
@@ -132,7 +134,7 @@ CREATE TABLE `productos` (
   PRIMARY KEY (`id_producto`),
   KEY `productos-guia_idx` (`id_linea`),
   CONSTRAINT `productos-guia` FOREIGN KEY (`id_linea`) REFERENCES `linea_productos` (`id_linea_productos`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -141,6 +143,7 @@ CREATE TABLE `productos` (
 
 LOCK TABLES `productos` WRITE;
 /*!40000 ALTER TABLE `productos` DISABLE KEYS */;
+INSERT INTO `productos` VALUES (1,'Taqueritos verdes',NULL,NULL,3.00,38.00,1,'2025-09-19 06:00:00','2025-09-19 06:00:00',1),(2,'Taqueritos azules',NULL,NULL,3.00,38.00,1,'2025-09-19 06:00:00','2025-09-19 06:00:00',1);
 /*!40000 ALTER TABLE `productos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -243,7 +246,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-09-19 21:50:41
-
-ALTER TABLE ⁠ yummies ⁠.⁠ pedidos ⁠ 
-ADD COLUMN ⁠ total ⁠ DECIMAL NULL AFTER ⁠ estado ⁠;
+-- Dump completed on 2025-09-19 23:54:17
