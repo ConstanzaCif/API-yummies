@@ -34,3 +34,7 @@ DB_NAME_PROD=
 PORT=
 ````
 ---
+
+## Instalación y ejecución
+git clone 
+cd 
