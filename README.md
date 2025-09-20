@@ -1,4 +1,4 @@
-# 🧾 Microservicio de Pagos
+# 🧾 YUMMIES
 
 API REST desarrollada en **Node.js + Express** para el uso de preventa de vendedores de ruta.  
 
