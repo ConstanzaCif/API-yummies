@@ -33,6 +33,10 @@ module.exports = function(sequelize, DataTypes) {
     estado: {
       type: DataTypes.TINYINT,
       allowNull: false
+    },
+    total: {
+      type: DataTypes.DECIMAL(18,2),
+      allowNull: true
     }
   }, {
     sequelize,
