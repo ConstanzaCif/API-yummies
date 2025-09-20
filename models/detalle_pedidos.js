@@ -27,11 +27,11 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     },
     precio_unitario: {
-      type: DataTypes.DECIMAL(10,0),
+      type: DataTypes.DECIMAL(18,2),
       allowNull: false
     },
     subtotal: {
-      type: DataTypes.DECIMAL(10,0),
+      type: DataTypes.DECIMAL(18,2),
       allowNull: false
     },
     estado: {
