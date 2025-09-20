@@ -9,9 +9,15 @@ module.exports = {
 
     async listAll (req, res) {
         try {
-            const usuario = req.body.usuario
-            const fecha_inicio = req.body.fecha_inicio;
-            const fecha_fin = req.body.fecha_fin;
+
+            let usuario, fecha_inicio, fecha_fin
+            if(req.body)
+            {
+                usuario = req.body.usuario || null;
+                fecha_inicio = req.body.fecha_inicio || null;
+                fecha_fin = req.body.fecha_fin|| null;
+            }
+
 
             let where = {};
 
@@ -34,7 +40,7 @@ module.exports = {
                 include: [
                     {
                         model: detalle_pedidos,
-                        as: 'detalle_pedido'
+                        as: 'detalle_pedidos'
                     }
                 ]
             });
@@ -42,7 +48,36 @@ module.exports = {
             res.status(200).json({ pedidos: results });
         }
         catch (error) {
+            console.log(error)
             res.status(500).json({ mensaje: "Error al listar los pedidos", error });
+        }
+    },
+
+    async listOne(req, res) {
+        const id_pedido = req.params.id_pedido
+        try {
+            const pedido = await pedidos.findOne({
+                where: {
+                    id_pedido
+                },
+                include: [
+                    {
+                        model: detalle_pedidos,
+                        as: 'detalle_pedidos'
+                    }
+                ]
+            })
+
+            if(!pedido)
+            {
+                return res.status(404).json({mensaje: "Pedido no encontrado"})
+            }
+
+            res.status(200).json({mensaje: "Pedido encontrado", pedido: pedido})
+        }
+        catch(error) {
+            console.log(error)
+            return res.status(500).json({mensaje: "Hubo un error" , error})
         }
     },
 
@@ -104,6 +139,41 @@ module.exports = {
             res.status(500).json({
                 mensaje: "Hubo un error al registrar el pedido", error
             })
+        }
+    },
+    async cambiarEstado(req, res) {
+        const id_pedido = req.params.id_pedido;
+        const estado = req.params.estado;
+
+        try
+        {
+            const pedido = await pedidos.findOne({
+                where: {
+                    id_pedido,
+                    estado: 1
+                }
+            });
+
+            if(!pedido)
+            {
+                return res.status(404).json({mensaje: "Pedido no encontrado"})
+            }
+
+            await pedido.update({
+                estado: estado
+            })
+            await pedido.reload();
+
+            await detalle_pedidos.update(
+                { estado }, 
+                { where: { id_pedido: id_pedido } }
+            );
+
+            res.status(200).json({mensaje: "Estado de pedido actualizado"})
+
+        }catch(error) {
+            console.log(error)
+            res.status(500).json({mensaje: "Hubo un error al actualizar el pedido", error})
         }
     }
 }

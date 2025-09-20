@@ -60,6 +60,59 @@ module.exports = {
         catch(error){
             res.status(500).json({mensaje: "Hubo un error ", error})
         }
+    },
+
+    async editarUsuario(req, res) {
+        const id_usuario = req.params.id_usuario;
+        const password = req.body.password || null;
+        const nombre = req.body.nombre || null;
+        const apellido = req.body.apellido || null;
+        const id_rol = req.body.id_rol || null;
+
+        try {
+            const _usuario = await usuarios.findOne({
+                where: {
+                    id_usuarios: id_usuario
+                }
+            })
+
+            if(!_usuario) {
+                return res.status(404).json({
+                    mensaje: "Usuario no encontrado"
+                })
+            }
+            
+           let updateData = {};
+
+            if (password) {
+                updateData.password = createHash('sha256').update(password).digest('hex');
+            }
+            if (nombre) {
+                updateData.nombre = nombre;
+            }
+            if (apellido) {
+                updateData.apellido = apellido;
+            }
+            if (id_rol) {
+                updateData.id_rol = id_rol;
+            }
+
+            await _usuario.update(updateData);
+
+            await _usuario.reload();
+
+            res.status(200).json({
+                mensaje: "Usuario actualizado correctamente",
+                usuario: _usuario
+            });
+
+        }catch(error) {
+            console.error(error);
+            res.status(500).json({
+                mensaje: "Hubo un error al actualizar el usuario",
+                error
+            });
+        }
     }
 
 }
