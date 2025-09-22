@@ -9,11 +9,11 @@ module.exports = {
             if(activas === 'true'){
                 where.estado = 1;
             }
-            const lineasProductos = await linea_productos.findAll({ where });
+            const dataLineaProductos = await linea_productos.findAll({ where });
             return res.status(200).json({
                 success: true,
-                message: "Lineas de producto obtenidas exitosamente",
-                data: lineasProductos
+                message: "Lineas de productos obtenidas exitosamente",
+                data: dataLineaProductos
             });
         }catch(error){
             console.error("Error al obtener las lineas de productos", error);
