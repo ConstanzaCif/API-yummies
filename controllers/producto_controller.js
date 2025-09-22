@@ -9,11 +9,11 @@ module.exports = {
             if(activos === 'true'){
                 where.estado = 1;
             }
-            const datos = await productos.findAll({where});
+            const dataProductos = await productos.findAll({where});
             return res.status(200).json({
                 success: true,
                 message: "Productos obtenidos exitosamente",
-                data: datos
+                data: dataProductos
             });
         }catch(error){
             console.error("Error al obtener productos", error);
