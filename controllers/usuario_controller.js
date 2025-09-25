@@ -44,7 +44,8 @@ module.exports = {
                 where:{
                     usename: username,
                     password: hash_password,
-                    estado: 1
+                    estado: 1,
+                    id_rol: 2
                 }
             })
 
