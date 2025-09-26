@@ -5,6 +5,36 @@ const { usuarios } = models
 const { createHash } = require('crypto');
 
 module.exports = {
+    async listAll(req, res) {
+        try {
+            const users = await usuarios.findAll()
+            res.status(200).json({users})
+        }
+        catch(error) {
+            res.status(500).json({mensaje: "Hubo un error", error})
+        }
+    },
+
+    async listOne(req, res) {
+        const id_usuarios = req.params.id_usuario
+        try{
+            
+            const usuario = await usuarios.findOne({
+                where: {
+                    id_usuarios
+                }
+            })
+
+            if(!usuario) {
+                return res.status(404).json({mensaje: "No se encontro el usuario"})
+            }
+
+            res.status(200).json(usuario)
+        }
+        catch(error) {
+            res.status(500).json({mensaje: "Ocurrio un error", error})
+        }
+    },
 
     async createUsuario(req, res) {
         let usuario = req.body;
