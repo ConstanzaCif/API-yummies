@@ -32,7 +32,7 @@ module.exports = {
         }
     },
 
-    async login(req, res) {
+    async login_web(req, res) {
         const username = req.body.username
         const password = req.body.password
 
@@ -46,6 +46,36 @@ module.exports = {
                     password: hash_password,
                     estado: 1,
                     id_rol: 2
+                }
+            })
+
+            if(!usuario){
+                return res.status(404).json({mensaje: "El usuario no fue encontrado"})
+            }
+
+            res.status(200).json({
+                mensaje:"Inicio de sesión exitoso",
+                usuario
+            })
+        }
+        catch(error){
+            res.status(500).json({mensaje: "Hubo un error ", error})
+        }
+    },
+
+    async login_movil(req, res) {
+        const username = req.body.username
+        const password = req.body.password
+
+        const hash_password = createHash('sha256').update(password).digest('hex');
+
+        try
+        {
+            const usuario = await usuarios.findOne({
+                where:{
+                    usename: username,
+                    password: hash_password,
+                    estado: 1
                 }
             })
 
