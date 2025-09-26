@@ -4,6 +4,7 @@ const { Op } = require("sequelize");
 const { pedidos } = models
 const { detalle_pedidos } = models
 const { productos } = models 
+const { usuarios } = models
 
 module.exports = {
 
@@ -41,6 +42,11 @@ module.exports = {
                     {
                         model: detalle_pedidos,
                         as: 'detalle_pedidos'
+                    },
+                    {
+                        model: usuarios,
+                        as: 'id_usuario_usuario',
+                        attributes: ['id_usuario', 'nombre', 'apellido', 'id_rol'] 
                     }
                 ]
             });

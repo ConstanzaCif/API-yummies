@@ -3,8 +3,38 @@ const { models } = require('../db');
 const { usuarios } = models
 
 const { createHash } = require('crypto');
+const usuarios = require('../models/usuarios');
+const { where } = require('sequelize');
 
 module.exports = {
+    async listAll(req, res) {
+        try {
+            const usuarios = await usuarios.findAll()
+            res.status(200).json({usuarios})
+        }
+        catch(error) {
+            res.status(500).json({mensaje: "Hubo un error", error})
+        }
+    },
+
+    async listOne(req, res) {
+        const idUsuario = req.params.idUsuario
+        try{
+            
+            const usuario = await usuarios.findOne({
+                where: {
+                    id_usuarios: idUsuario
+                }
+            })
+
+            if(!usuario) {
+                return res.status(404).json({mensaje: "No se encontro el usuario"})
+            }
+        }
+        catch(error) {
+            res.status(500).json({mensaje: "Ocurrio un error", error})
+        }
+    },
 
     async createUsuario(req, res) {
         let usuario = req.body;
