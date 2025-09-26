@@ -2,27 +2,48 @@ const { models } = require('../db');
 const { productos } = models;
 
 module.exports = {
-    async listarProductos(req,res){
-        try{
-            const { activos } = req.query;
-            let where = {};
-            if(activos === 'true'){
-                where.estado = 1;
-            }
-            const dataProductos = await productos.findAll({where});
-            return res.status(200).json({
-                success: true,
-                message: "Productos obtenidos exitosamente",
-                data: dataProductos
-            });
-        }catch(error){
-            console.error("Error al obtener productos", error);
-            return res.status(500).json({
-                success: false,
-                message: "Error al obtener productos"
-            });
-        }
-    },
+    async listarProductos(req, res) {
+  try {
+    const { activos, id } = req.query;
+    let where = {};
+
+    // Filtrar solo activos
+    if (activos === 'true') {
+      where.estado = 1;
+    }
+
+    // Filtrar por ID si viene en query
+    if (id) {
+      where.id_producto = id;
+    }
+
+    const dataProductos = await productos.findAll({
+      where,   
+      include: [
+        { model: models.linea_productos, as: 'id_linea_linea_producto', attributes: ['linea_productos'] }
+      ]
+    });
+
+    if (id && dataProductos.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Producto no encontrado"
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: id ? "Producto obtenido exitosamente" : "Productos obtenidos exitosamente",
+      data: dataProductos
+    });
+  } catch (error) {
+    console.error("Error al obtener productos", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error al obtener productos"
+    });
+  }
+},
     async crearProducto(req,res){
         try{
             const { body, file } = req;
