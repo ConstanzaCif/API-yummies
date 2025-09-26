@@ -3,11 +3,13 @@ const { sequelize } = require('./db');
 const routes = require('./routes');
 const app = express();
 const path = require('path');
+const cors = require('cors');
 
 
 require('dotenv').config();
 console.log(process.env.DB_NAME);
 
+app.use(cors({ origin: '*' }));
 app.use(express.json());
 app.use('/api', routes);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

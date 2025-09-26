@@ -49,3 +49,5 @@ tmp/
 temp/
 *.swp
 *.swo
+
+gradlew.bat
