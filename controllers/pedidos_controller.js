@@ -5,8 +5,72 @@ const { pedidos } = models
 const { detalle_pedidos } = models
 const { productos } = models 
 const { usuarios } = models
+const { tiendas } = models
 
 module.exports = {
+
+async searchPedidos(req, res) {
+    const search = req.query.q || ''; 
+    const fecha_inicio = req.query.fecha_inicio || null;
+    const fecha_fin = req.query.fecha_fin || null;
+
+    try {
+        let wherePedidos = {};
+        if (fecha_inicio && fecha_fin) {
+            wherePedidos.fecha = { [Op.between]: [fecha_inicio, fecha_fin] };
+        } else if (fecha_inicio) {
+            wherePedidos.fecha = { [Op.gte]: fecha_inicio };
+        } else if (fecha_fin) {
+            wherePedidos.fecha = { [Op.lte]: fecha_fin };
+        }
+        const includeUsuarios = {
+            model: usuarios,
+            as: 'id_usuario_usuario',
+            attributes: ['id_usuarios', 'nombre', 'apellido', 'id_rol']
+        };
+
+        if (search && search.trim() !== '') {
+            includeUsuarios.where = {
+                [Op.or]: [
+                    { nombre: { [Op.iLike]: `%${search}%` } },
+                    { apellido: { [Op.iLike]: `%${search}%` } },
+                    Sequelize.literal(`CONCAT("id_usuario_usuario"."nombre", ' ', "id_usuario_usuario"."apellido") ILIKE '%${search}%'`)
+                ]
+            };
+        }
+
+        const results = await pedidos.findAll({
+            where: wherePedidos,
+            include: [
+                includeUsuarios,
+                {
+                    model: detalle_pedidos,
+                    as: 'detalle_pedidos',
+                    include: [
+                        {
+                            model: productos,
+                            as: "id_producto_producto",
+                            attributes: ["id_producto", "nombre_producto", "precio"]
+                        }
+                    ]
+                },
+                {
+                    model: tiendas,
+                    as: 'id_tienda_tienda',
+                    attributes: ['id_tiendas', 'nombre_tienda']
+                }
+            ],
+            order: [['fecha', 'DESC']]
+        });
+
+        res.status(200).json({ pedidos: results });
+    } catch (error) {
+        console.error("Error al buscar pedidos:", error);
+        res.status(500).json({ mensaje: "Error al buscar pedidos", error });
+    }
+},
+
+
 
     async listAll (req, res) {
         try {
@@ -41,12 +105,24 @@ module.exports = {
                 include: [
                     {
                         model: detalle_pedidos,
-                        as: 'detalle_pedidos'
+                        as: 'detalle_pedidos',
+                        include: [
+                            {
+                                model: productos,
+                                as: "id_producto_producto", 
+                                attributes: ["id_producto", "nombre_producto", "precio"] 
+                            }
+                        ]
                     },
                     {
                         model: usuarios,
                         as: 'id_usuario_usuario',
-                        attributes: ['id_usuario', 'nombre', 'apellido', 'id_rol'] 
+                        attributes: ['id_usuarios', 'nombre', 'apellido', 'id_rol'] 
+                    },
+                    {
+                        model: tiendas,
+                        as: 'id_tienda_tienda', 
+                        attributes: ['id_tiendas', 'nombre_tienda']
                     }
                 ]
             });
@@ -69,7 +145,24 @@ module.exports = {
                 include: [
                     {
                         model: detalle_pedidos,
-                        as: 'detalle_pedidos'
+                        as: 'detalle_pedidos',
+                        include: [
+                            {
+                                model: productos,
+                                as: "id_producto_producto", 
+                                attributes: ["id_producto", "nombre_producto", "precio"] 
+                            }
+                        ]
+                    },
+                    {
+                        model: usuarios,
+                        as: 'id_usuario_usuario',
+                        attributes: ['id_usuarios', 'nombre', 'apellido', 'id_rol'] 
+                    },
+                    {
+                        model: tiendas,
+                        as: 'id_tienda_tienda', 
+                        attributes: ['id_tiendas', 'nombre_tienda']
                     }
                 ]
             })
@@ -90,7 +183,8 @@ module.exports = {
     async create (req, res) {
         const detalles = req.body.detalle;
         const tienda = req.body.tienda;
-        const ubicacion = req.body.ubicacion;
+        const latitud = req.body.latitud;
+        const longitud = req.body.longitud;
         const usuario = req.body.id_usuario;
         const fecha = req.body.fecha;
 
@@ -101,7 +195,8 @@ module.exports = {
             const pedido = await pedidos.create({
                 fecha: fecha,
                 id_tienda: tienda,
-                ubicacion: ubicacion, 
+                latitud: latitud,
+                longitud: longitud, 
                 id_usuario: usuario,
                 estado: 1
             })
