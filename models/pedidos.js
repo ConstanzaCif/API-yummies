@@ -19,10 +19,6 @@ module.exports = function(sequelize, DataTypes) {
         key: 'id_tiendas'
       }
     },
-    ubicacion: {
-      type: DataTypes.STRING(150),
-      allowNull: false
-    },
     id_usuario: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -37,6 +33,14 @@ module.exports = function(sequelize, DataTypes) {
     },
     total: {
       type: DataTypes.DECIMAL(18,2),
+      allowNull: true
+    },
+    latitud: {
+      type: DataTypes.DECIMAL(10,7),
+      allowNull: true
+    },
+    longitud: {
+      type: DataTypes.DECIMAL(10,7),
       allowNull: true
     }
   }, {
