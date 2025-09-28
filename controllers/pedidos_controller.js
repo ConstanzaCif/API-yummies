@@ -46,7 +46,7 @@ module.exports = {
                     {
                         model: usuarios,
                         as: 'id_usuario_usuario',
-                        attributes: ['id_usuario', 'nombre', 'apellido', 'id_rol'] 
+                        attributes: ['id_usuarios', 'nombre', 'apellido', 'id_rol'] 
                     }
                 ]
             });
