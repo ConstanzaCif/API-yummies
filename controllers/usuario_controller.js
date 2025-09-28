@@ -75,7 +75,7 @@ module.exports = {
                     usename: username,
                     password: hash_password,
                     estado: 1,
-                    id_rol: 2
+                    id_rol: 1
                 }
             })
 
