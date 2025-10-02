@@ -23,6 +23,31 @@ module.exports = {
             });
         }
     },
+    async obtenerTienda(req, res) {
+  try {
+    const { id_tiendas } = req.params;
+    const tienda = await tiendas.findByPk(id_tiendas);
+
+    if (!tienda) {
+      return res.status(404).json({
+        success: false,
+        message: "Tienda no encontrada"
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Tienda encontrada",
+      data: tienda
+    });
+  } catch (error) {
+    console.error("Error al obtener la tienda", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error al obtener la tienda",
+    });
+  }
+},
     async crearTienda(req,res) {
         try{
             const nuevaTienda = await tiendas.create({ ...req.body, estado: 1 });
