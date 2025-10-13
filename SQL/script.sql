@@ -93,6 +93,7 @@ CREATE TABLE `pedidos` (
   `latitud` DECIMAL(10,7),
   `longitud` DECIMAL(10,7),
   `id_usuario` int NOT NULL,
+  `imagen` MEDIUMBLOB NOT NULL,
   `createdAt` timestamp NOT NULL,
   `updatedAt` timestamp NOT NULL,
   `estado` tinyint NOT NULL,

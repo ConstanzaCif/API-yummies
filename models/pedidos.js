@@ -19,6 +19,14 @@ module.exports = function(sequelize, DataTypes) {
         key: 'id_tiendas'
       }
     },
+    latitud: {
+      type: DataTypes.DECIMAL(10,7),
+      allowNull: true
+    },
+    longitud: {
+      type: DataTypes.DECIMAL(10,7),
+      allowNull: true
+    },
     id_usuario: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -27,20 +35,16 @@ module.exports = function(sequelize, DataTypes) {
         key: 'id_usuarios'
       }
     },
+    imagen: {
+      type: DataTypes.BLOB('medium'),
+      allowNull: true
+    },
     estado: {
       type: DataTypes.TINYINT,
       allowNull: false
     },
     total: {
       type: DataTypes.DECIMAL(18,2),
-      allowNull: true
-    },
-    latitud: {
-      type: DataTypes.DECIMAL(10,7),
-      allowNull: true
-    },
-    longitud: {
-      type: DataTypes.DECIMAL(10,7),
       allowNull: true
     }
   }, {

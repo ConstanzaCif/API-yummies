@@ -181,12 +181,7 @@ async searchPedidos(req, res) {
     },
 
     async create (req, res) {
-        const detalles = req.body.detalle;
-        const tienda = req.body.tienda;
-        const latitud = req.body.latitud;
-        const longitud = req.body.longitud;
-        const usuario = req.body.id_usuario;
-        const fecha = req.body.fecha;
+        const { detalle: detalles, tienda, latitud, longitud, id_usuario: usuario, fecha, imagen } = req.body;
 
         let subtotal = 0;
         let total = 0
@@ -198,8 +193,9 @@ async searchPedidos(req, res) {
                 latitud: latitud,
                 longitud: longitud, 
                 id_usuario: usuario,
-                estado: 1
-            })
+                estado: 1,
+                imagen: imagen ? Buffer.from(imagen, 'base64') : null
+            });
 
             for(const detalle of detalles) {
                 const _producto = await productos.findOne({
@@ -237,6 +233,7 @@ async searchPedidos(req, res) {
             })
         }
         catch(error) {
+            console.error('Hubo un error al registrar el pedido', error);
             res.status(500).json({
                 mensaje: "Hubo un error al registrar el pedido", error
             })
@@ -245,7 +242,7 @@ async searchPedidos(req, res) {
     async cambiarEstado(req, res) {
         const id_pedido = req.params.id_pedido;
         const estado = req.params.estado;
-
+        
         try
         {
             const pedido = await pedidos.findOne({
