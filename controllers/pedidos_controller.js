@@ -7,6 +7,16 @@ const { productos } = models
 const { usuarios } = models
 const { tiendas } = models
 
+const convertPedidosToBase64 = (pedidosArray) => {
+  return pedidosArray.map(pedido => {
+    const pedidoJson = pedido.toJSON();
+    if (pedidoJson.imagen) {
+      pedidoJson.imagen = `data:image/jpeg;base64,${pedidoJson.imagen.toString('base64')}`;
+    }
+    return pedidoJson;
+  });
+};
+
 module.exports = {
 
 async searchPedidos(req, res) {
@@ -63,7 +73,8 @@ async searchPedidos(req, res) {
             order: [['fecha', 'DESC']]
         });
 
-        res.status(200).json({ pedidos: results });
+        const pedidosConImagen = convertPedidosToBase64(results);
+        res.status(200).json({ pedidos: pedidosConImagen });
     } catch (error) {
         console.error("Error al buscar pedidos:", error);
         res.status(500).json({ mensaje: "Error al buscar pedidos", error });
@@ -127,7 +138,8 @@ async searchPedidos(req, res) {
                 ]
             });
 
-            res.status(200).json({ pedidos: results });
+            const pedidosConImagen = convertPedidosToBase64(results);
+            res.status(200).json({ pedidos: pedidosConImagen });
         }
         catch (error) {
             console.log(error)
@@ -172,7 +184,12 @@ async searchPedidos(req, res) {
                 return res.status(404).json({mensaje: "Pedido no encontrado"})
             }
 
-            res.status(200).json({mensaje: "Pedido encontrado", pedido: pedido})
+            let pedidoJson = pedido.toJSON();
+            if (pedidoJson.imagen) {
+            pedidoJson.imagen = `data:image/jpeg;base64,${pedidoJson.imagen.toString('base64')}`;
+            }
+
+            res.status(200).json({mensaje: "Pedido encontrado", pedido: pedidoJson})
         }
         catch(error) {
             console.log(error)
@@ -181,12 +198,7 @@ async searchPedidos(req, res) {
     },
 
     async create (req, res) {
-        const detalles = req.body.detalle;
-        const tienda = req.body.tienda;
-        const latitud = req.body.latitud;
-        const longitud = req.body.longitud;
-        const usuario = req.body.id_usuario;
-        const fecha = req.body.fecha;
+        const { detalle: detalles, tienda, latitud, longitud, id_usuario: usuario, fecha, imagen } = req.body;
 
         let subtotal = 0;
         let total = 0
@@ -198,8 +210,9 @@ async searchPedidos(req, res) {
                 latitud: latitud,
                 longitud: longitud, 
                 id_usuario: usuario,
-                estado: 1
-            })
+                estado: 1,
+                imagen: imagen ? Buffer.from(imagen, 'base64') : null
+            });
 
             for(const detalle of detalles) {
                 const _producto = await productos.findOne({
@@ -237,6 +250,7 @@ async searchPedidos(req, res) {
             })
         }
         catch(error) {
+            console.error('Hubo un error al registrar el pedido', error);
             res.status(500).json({
                 mensaje: "Hubo un error al registrar el pedido", error
             })
@@ -245,7 +259,7 @@ async searchPedidos(req, res) {
     async cambiarEstado(req, res) {
         const id_pedido = req.params.id_pedido;
         const estado = req.params.estado;
-
+        
         try
         {
             const pedido = await pedidos.findOne({
